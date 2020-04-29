@@ -54,6 +54,7 @@ public class YapayZeka_Odev2 extends Application{
     }
     
     private void showMainScreen(){
+        //ilk olarak gerekli parametreler, degiskenler ve oyun alani olusturuluyor.
         min_path_len = 0x7FFFFFFF;
         min_manhattan_len = 0x7FFFFFFF;
         a = new Oyun_Alani(n,l);
@@ -65,22 +66,22 @@ public class YapayZeka_Odev2 extends Application{
             individuals[i] = new Birey(max_len, mutation_rate, false);               
         
         for(int i = 0; i < num_of_iterations; i++){
+            //Belirlenen iterasyon sayisi boyunca yeni bireyler olusturulyor.
             double total_fitness = 0.0;
             double min_fitness = Double.MAX_VALUE;
             
-            for(int j = 0; j < individuals.length; j++){ // hareket et
+            for(int j = 0; j < individuals.length; j++){ // hareket et ve arayuzu guncelle
                 for(int k = 0; k < max_len && move(individuals[j], a, individuals[j].path[k], false); k++);
                 if(!individuals[j].has_arrived){
                     individuals[j].fitness = 3.0 * (double)(individuals[j].x - 1 + individuals[j].y - 1) /
-                         (double)(n + 1 - individuals[j].x + n + 1 - individuals[j].y) - 2.0 * individuals[j].penalty;// - (double)(individuals[j].current_dist) // daha iyi bir fitness fonksiyonu bul
+                         (double)(n + 1 - individuals[j].x + n + 1 - individuals[j].y) - 2.0 * individuals[j].penalty;//birey cikisa ne kadar yakinsa, ne kadar az duvara carpmis ve gectigi yollardan tekrar gecmemisse o kadar uyumlu
                     if(individuals[j].fitness < min_fitness)
-                        min_fitness = individuals[j].fitness;
+                        min_fitness = individuals[j].fitness; 
                 }
                 else{
                     individuals[j].fitness = 4.0 * (double)(individuals[j].x - 1 + individuals[j].y - 1) - individuals[j].penalty; 
                     //gidecegi yere ulasmissa cezanin etkisini azaltip gelinen yolun etkisini arttiriyorum.
-                    System.out.println("Bulundu");
-                    //System.exit(0);
+                    //System.out.println("Bulundu");
                 }
                 
             }
@@ -92,6 +93,7 @@ public class YapayZeka_Odev2 extends Application{
                 total_fitness += individuals[j].fitness;
             }
             
+            //Bireyler fitness degerlerine gore siralaniyor
             Arrays.sort(individuals, new Comparator<Birey>(){
                 @Override
                 public int compare(Birey b1, Birey b2){   
@@ -100,30 +102,25 @@ public class YapayZeka_Odev2 extends Application{
                 }      
             });
             
-            for(int j = 0; j < individuals.length; j++){
+           /* for(int j = 0; j < individuals.length; j++){
                 for(int k = 0; k < individuals.length - 1; k++){
                     if(individuals[k].fitness > individuals[k + 1].fitness){
                         swap(individuals, k, k+1);
                     }
                 }
-            }
+            }*/
             
-            /*for(int k = 0; k < individuals.length; k++){
-            for(int j = 0; j < individuals[k].len; j++){
-                System.out.print(individuals[k].path[j]+ " ");
-            }
-            System.out.println("");
-            }
-            System.out.println("\n\n\n\n\n");*/
+           
+            //En iyi birey arayuzde gosteriliyor ve parametreler guncelleniyor.
             drawBestIndividual(individuals[individuals.length - 1], a);
             changeLabels(individuals[individuals.length - 1].current_dist, i);
             
             Birey new_individuals[] = new Birey[individuals.length];
             
-            for(int j = 0; j < individuals.length; j++){ // normal secim, rulet tekeride yaz
+            for(int j = 0; j < individuals.length; j++){ // Yeni bireyler olusturuluyor.
                 double chance1 = Math.random() * total_fitness, chance2 = Math.random() * total_fitness, inc = 0.0;
                 Birey parent1 = null, parent2 = null;
-                for(int k = individuals.length - 1; k >= 0; k--){ // secim
+                for(int k = individuals.length - 1; k >= 0; k--){ // Secim yapiliyor.
                     inc += individuals[k].fitness;
                     if(inc >= chance1){
                         parent1 = individuals[k];
@@ -138,9 +135,9 @@ public class YapayZeka_Odev2 extends Application{
                         break;
                     }
                 }
-                new_individuals[j] = getChild(parent1, parent2); // cross-over
+                new_individuals[j] = getChild(parent1, parent2); // cross-over yapılıp olusturulan yeni birey dizisine koyuluyor.
                 for(int m = 0; m < new_individuals[j].len; m++){
-                if(Math.random() < new_individuals[j].mutation_rate){ // mutasyon                  
+                if(Math.random() < new_individuals[j].mutation_rate){ // mutasyon yapiliyor.                  
                     int incr = 1+(int)(Math.random() * 3.0);
                     new_individuals[j].path[m] = (new_individuals[j].path[m] + incr)%4;
                     if(new_individuals[j].path[m] == 0)
@@ -148,9 +145,11 @@ public class YapayZeka_Odev2 extends Application{
                 }
                 }
             }
+            //olusturulan bireyler bir sonraki iterasyonda kullanilmak uzere saklaniyor.
             individuals = new_individuals;
             
         }
+        //Algoritma calistiktan sonra bulunan en iyi birey arayuzde gosteriliyor.
         drawBestIndividual(min_indiv,a);
         a.finishLabel.setVisible(true);
     });
@@ -158,6 +157,7 @@ public class YapayZeka_Odev2 extends Application{
     }
     
     private void showFirstScreen(){
+        //Uygulamanin ilk ekraninda kullanicidan hiperparametreler isteniyor. Eğer bu kisim bos birakilirsa onceden belirlenen parametreler kullanilacak.
         s = new Stage();
         s.setTitle("Yapay_Zeka_2.Odev");
         Pane pane = new Pane();

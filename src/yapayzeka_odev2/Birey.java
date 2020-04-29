@@ -10,6 +10,7 @@ import java.util.ArrayList;
 /**
  *
  * @author cihan
+ * Bireylerin uzerinde daha rahat islem yapabilmek icin asagidaki sinif ve fonksiyonlar olusturulmustur.
  */
 public class Birey {
     public int x;

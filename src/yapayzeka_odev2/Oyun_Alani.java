@@ -16,8 +16,9 @@ import javafx.scene.control.Label;
 /**
  *
  * @author cihan
+ * Arayuzde gosterilecek oyun alani icin asagidaki sinif ve fonksiyonlar olusturulmustur.
  */
-public class Oyun_Alani{   
+public class Oyun_Alani{      
     public int n;
     public int l;
     public int gameArea[][];
